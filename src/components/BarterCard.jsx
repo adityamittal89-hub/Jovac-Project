@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaRegEdit, FaTrashAlt } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext"; // Adjust path if needed
 
 const BarterCard = ({
   title,
@@ -8,10 +9,22 @@ const BarterCard = ({
   image,
   lookingFor,
   owner,
+  contact,      // <-- add contact prop here: { email, phone }
   onEdit,
   onDelete,
   editable,
 }) => {
+  const { user } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleContactClick = () => {
+    if (!user) {
+      alert("Please log in to view contact information.");
+      return;
+    }
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="bg-white rounded shadow hover:shadow-lg transition p-4 flex flex-col gap-3 relative">
       {editable && (
@@ -32,6 +45,7 @@ const BarterCard = ({
           </button>
         </div>
       )}
+
       <img
         src={image}
         alt={title}
@@ -40,13 +54,46 @@ const BarterCard = ({
       <h3 className="font-semibold text-lg">{title}</h3>
       <div className="text-sm text-gray-600">{description}</div>
       <div className="flex flex-wrap gap-2 mt-2">
-        <span className="bg-gray-100 text-xs px-2 py-1 rounded">Category: {category}</span>
+        <span className="bg-gray-100 text-xs px-2 py-1 rounded">
+          Category: {category}
+        </span>
         <span className="bg-indigo-100 text-xs px-2 py-1 rounded">
           Looking for: <span className="font-medium">{lookingFor}</span>
         </span>
       </div>
       {owner && (
         <div className="text-xs text-gray-400 mt-2">By {owner}</div>
+      )}
+
+      {/* Contact Info Button */}
+      <button
+        onClick={handleContactClick}
+        className="mt-3 bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Contact Info
+      </button>
+
+      {/* Contact Info Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
+            <h2 className="text-lg font-semibold mb-2">Contact Info</h2>
+            <p>
+              <strong>Email:</strong> {contact?.email || "N/A"}
+            </p>
+            {contact?.phone && (
+              <p>
+                <strong>Phone:</strong> {contact.phone}
+              </p>
+            )}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

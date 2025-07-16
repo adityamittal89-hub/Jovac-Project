@@ -9,6 +9,7 @@ const Register = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",       // added phone here
     password: "",
     confirm: "",
   });
@@ -22,7 +23,7 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
-    if (!form.name || !form.email || !form.password || !form.confirm) {
+    if (!form.name || !form.email || !form.phone || !form.password || !form.confirm) {
       setError("Please fill in all fields.");
       return;
     }
@@ -37,6 +38,7 @@ const Register = () => {
     const ok = register({
       name: form.name,
       email: form.email,
+      phone: form.phone,        // pass phone here
       password: form.password,
     });
     if (ok) {
@@ -80,6 +82,15 @@ const Register = () => {
           onChange={handleChange}
           required
           autoComplete="email"
+        />
+        <FormInput
+          label="Phone Number"
+          type="tel"
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          required
+          placeholder="Enter your phone number"
         />
         <FormInput
           label="Password"

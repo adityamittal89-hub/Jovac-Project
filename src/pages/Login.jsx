@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import FormInput from "../components/FormInput";
@@ -9,21 +9,19 @@ const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
-  if (user) {
-    navigate("/dashboard", { replace: true });
-  }
+  useEffect(() => {
+    if (user) navigate("/dashboard", { replace: true });
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const success = login(form);
-    if (success) {
-      navigate("/dashboard");
-    } else {
+    const success = await login(form);
+    if (!success) {
       setError("Invalid credentials.");
     }
   };

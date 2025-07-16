@@ -6,6 +6,7 @@ const dummyUser = {
   id: 1,
   name: "Jane Doe",
   email: "jane@example.com",
+  phone: "9876543210", // default phone added here for login mock
 };
 
 const initialListings = [
@@ -19,6 +20,10 @@ const initialListings = [
     lookingFor: "Keyboard",
     owner: "Jane Doe",
     userId: 1,
+    contact: {
+      email: "jane@example.com",
+      phone: "9876543210",
+    },
   },
   {
     id: 2,
@@ -30,11 +35,14 @@ const initialListings = [
     lookingFor: "Skateboards",
     owner: "Jane Doe",
     userId: 1,
+    contact: {
+      email: "jane@example.com",
+      phone: "9876543210",
+    },
   },
 ];
 
 export const AuthProvider = ({ children }) => {
-  
   const [user, setUser] = useState(() => {
     const data = localStorage.getItem("bartrly_user");
     return data ? JSON.parse(data) : null;
@@ -54,7 +62,6 @@ export const AuthProvider = ({ children }) => {
 
   // Auth logic (mocked)
   const login = ({ email, password }) => {
-    // Accept any credentials, just check email
     if (email && password) {
       setUser({ ...dummyUser, email });
       return true;
@@ -66,9 +73,14 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const register = ({ name, email, password }) => {
-    // Accept any registration, just set user (in real app, call API)
-    if (name && email && password) {
+  const register = ({ name, email, password, phone }) => {
+    if (name && email && password && phone) {
+      setUser({
+        id: Date.now(),
+        name,
+        email,
+        phone,
+      });
       return true;
     }
     return false;
@@ -83,6 +95,10 @@ export const AuthProvider = ({ children }) => {
         id: Date.now(),
         owner: user.name,
         userId: user.id,
+        contact: {
+          email: user.email,
+          phone: user.phone,
+        },
       },
     ]);
   };
