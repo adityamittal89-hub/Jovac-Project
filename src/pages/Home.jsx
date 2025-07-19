@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useListings } from "../context/ListingsContext"; // renamed hook for clarity
 import BarterCard from "../components/BarterCard";
 import { FaSearch, FaPlusCircle, FaHandshake } from "react-icons/fa";
+import { useUser } from "@clerk/clerk-react";
 
 const Home = () => {
-  const { listings } = useAuth();
+  const { listings } = useListings();
+  const { isSignedIn } = useUser();
 
   return (
     <div>
@@ -19,12 +21,14 @@ const Home = () => {
           <p className="text-lg text-gray-600 mb-8">
             Trade goods & skills, skip the cash. Discover, offer, and connect with your local community.
           </p>
-          <Link
-            to="/add-listing"
-            className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold  hover:bg-indigo-700 text-lg transition rounded-2xl"
-          >
-            Post a Listing
-          </Link>
+          {isSignedIn && (
+            <Link
+              to="/add-listing"
+              className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold hover:bg-indigo-700 text-lg transition rounded-2xl"
+            >
+              Post a Listing
+            </Link>
+          )}
         </div>
       </section>
 
@@ -64,12 +68,14 @@ const Home = () => {
           <h2 className="text-xl font-bold text-gray-800">
             Featured Listings
           </h2>
-          <Link
-            to="/add-listing"
-            className="text-indigo-600 font-medium hover:underline"
-          >
-            Post a Listing
-          </Link>
+          {isSignedIn && (
+            <Link
+              to="/add-listing"
+              className="text-indigo-600 font-medium hover:underline"
+            >
+              Post a Listing
+            </Link>
+          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {listings.slice(0, 6).map((card) => (

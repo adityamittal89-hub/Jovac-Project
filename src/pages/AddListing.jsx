@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useListings } from "../context/ListingsContext";
+import { useUser } from "@clerk/clerk-react"; // <-- Clerk hook
 import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 
@@ -14,7 +15,8 @@ const categories = [
 ];
 
 const AddListing = () => {
-  const { addListing } = useAuth();
+  const { addListing } = useListings();
+  const { user } = useUser();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: "",
@@ -23,6 +25,7 @@ const AddListing = () => {
     image: "",
     lookingFor: "",
   });
+  
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -43,7 +46,13 @@ const AddListing = () => {
       setError("Please fill all fields.");
       return;
     }
-    addListing(form);
+    if (!user) {
+      setError("You must be signed in to add a listing.");
+      return;
+    }
+
+    // Pass form and Clerk user to addListing
+    addListing(form, user);
     navigate("/dashboard");
   };
 
@@ -124,8 +133,8 @@ const AddListing = () => {
           )}
         </div>
         <FormInput
-          label='Looking For'
-          name='lookingFor'
+          label="Looking For"
+          name="lookingFor"
           value={form.lookingFor}
           onChange={handleChange}
           required

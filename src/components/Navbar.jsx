@@ -1,17 +1,15 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/clerk-react";
 import { FaExchangeAlt } from "react-icons/fa";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
-
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
@@ -19,6 +17,7 @@ const Navbar = () => {
           <FaExchangeAlt className="text-indigo-500" />
           Bartrly
         </Link>
+
         <div className="flex items-center gap-6">
           <Link to="/" className="hidden md:inline-block hover:text-indigo-600">
             Home
@@ -26,34 +25,27 @@ const Navbar = () => {
           <Link to="/contact" className="hidden md:inline-block hover:text-indigo-600">
             Contact
           </Link>
-          {user ? (
-            <>
-              <Link to="/dashboard" className="hover:text-indigo-600">
-                Dashboard
-              </Link>
-              <Link to="/my-listings" className="hover:text-indigo-600">
-                My Listings
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="ml-2 px-4 py-1 rounded bg-indigo-100 text-indigo-700 font-medium hover:bg-indigo-200"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="hover:text-indigo-600">
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="px-4 py-1 rounded bg-indigo-600 text-white font-medium hover:bg-indigo-700"
-              >
+
+          <SignedIn>
+            <Link to="/dashboard" className="hover:text-indigo-600">
+              Dashboard
+            </Link>
+            <Link to="/my-listings" className="hover:text-indigo-600">
+              My Listings
+            </Link>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="hover:text-indigo-600">Login</button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="px-4 py-1 rounded bg-indigo-600 text-white font-medium hover:bg-indigo-700">
                 Register
-              </Link>
-            </>
-          )}
+              </button>
+            </SignUpButton>
+          </SignedOut>
         </div>
       </div>
     </nav>

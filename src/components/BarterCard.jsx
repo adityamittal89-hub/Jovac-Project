@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaRegEdit, FaTrashAlt } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext"; // Adjust path if needed
+import { useUser } from "@clerk/clerk-react"; // ✅ Clerk auth
 
 const BarterCard = ({
   title,
@@ -9,17 +9,17 @@ const BarterCard = ({
   image,
   lookingFor,
   owner,
-  contact,      // <-- add contact prop here: { email, phone }
+  contact, 
   onEdit,
   onDelete,
   editable,
 }) => {
-  const { user } = useAuth();
+  const { isSignedIn } = useUser(); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleContactClick = () => {
-    if (!user) {
-      alert("Please log in to view contact information.");
+    if (!isSignedIn) {
+      alert("Please sign in to view contact information.");
       return;
     }
     setIsModalOpen(true);

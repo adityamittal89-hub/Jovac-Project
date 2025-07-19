@@ -1,15 +1,19 @@
 import React from "react";
-import { useAuth } from "../context/AuthContext";
+import { useListings } from "../context/ListingsContext"; // ✅ Correct hook
 import BarterCard from "../components/BarterCard";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react"; // Clerk user hook
 
 const MyListings = () => {
-  const { listings, user, deleteListing } = useAuth();
+  const { listings, deleteListing } = useListings(); // ✅ Correct usage
+  const { user } = useUser(); // Clerk user object
   const navigate = useNavigate();
-  const myListings = listings.filter((l) => l.owner === user?.name);
+
+  const userName = user?.fullName || user?.emailAddress || "";
+
+  const myListings = listings.filter((l) => l.owner === userName);
 
   const handleEdit = (id) => {
-    // In real app, prefill edit form
     alert("Edit feature is not implemented (mock only).");
   };
 

@@ -1,13 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-const AuthContext = createContext();
-
-const dummyUser = {
-  id: 1,
-  name: "Jane Doe",
-  email: "jane@example.com",
-  phone: "9876543210", // default phone added here for login mock
-};
+const ListingsContext = createContext();
 
 const initialListings = [
   {
@@ -42,62 +35,27 @@ const initialListings = [
   },
 ];
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const data = localStorage.getItem("bartrly_user");
-    return data ? JSON.parse(data) : null;
-  });
+export const ListingsProvider = ({ children }) => {
   const [listings, setListings] = useState(() => {
     const data = localStorage.getItem("bartrly_listings");
     return data ? JSON.parse(data) : initialListings;
   });
 
   useEffect(() => {
-    localStorage.setItem("bartrly_user", JSON.stringify(user));
-  }, [user]);
-
-  useEffect(() => {
     localStorage.setItem("bartrly_listings", JSON.stringify(listings));
   }, [listings]);
 
-  // Auth logic (mocked)
-  const login = ({ email, password }) => {
-    if (email && password) {
-      setUser({ ...dummyUser, email });
-      return true;
-    }
-    return false;
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
-
-  const register = ({ name, email, password, phone }) => {
-    if (name && email && password && phone) {
-      setUser({
-        id: Date.now(),
-        name,
-        email,
-        phone,
-      });
-      return true;
-    }
-    return false;
-  };
-
-  // Listing logic (mocked)
-  const addListing = (listing) => {
+  const addListing = (listing, user) => {
     setListings((prev) => [
       ...prev,
       {
         ...listing,
         id: Date.now(),
-        owner: user.name,
+        owner: user.fullName || user.firstName || "Unknown",
         userId: user.id,
         contact: {
-          email: user.email,
-          phone: user.phone,
+          email: user.emailAddresses?.[0]?.emailAddress || "",
+          phone: user.phoneNumbers?.[0]?.phoneNumber || "",
         },
       },
     ]);
@@ -114,21 +72,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-        register,
-        listings,
-        addListing,
-        editListing,
-        deleteListing,
-      }}
+    <ListingsContext.Provider
+      value={{ listings, addListing, editListing, deleteListing }}
     >
       {children}
-    </AuthContext.Provider>
+    </ListingsContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useListings = () => useContext(ListingsContext);
