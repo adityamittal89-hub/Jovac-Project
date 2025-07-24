@@ -47,7 +47,7 @@ const BarterCard = ({
       )}
 
       <img
-        src={image}
+        src={image || "https://placehold.co/400x200?text=No+Image"}
         alt={title}
         className="h-40 w-full object-cover rounded mb-2"
       />

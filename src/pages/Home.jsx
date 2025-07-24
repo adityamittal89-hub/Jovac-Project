@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useListings } from "../context/ListingsContext"; // renamed hook for clarity
 import BarterCard from "../components/BarterCard";
@@ -8,6 +8,13 @@ import { useUser } from "@clerk/clerk-react";
 const Home = () => {
   const { listings } = useListings();
   const { isSignedIn } = useUser();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredListings = listings.filter(
+    (listing) =>
+      listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      listing.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div>
@@ -21,6 +28,23 @@ const Home = () => {
           <p className="text-lg text-gray-600 mb-8">
             Trade goods & skills, skip the cash. Discover, offer, and connect with your local community.
           </p>
+
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto py-4">
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <FaSearch className="text-gray-400" />
+              </span>
+              <input
+                type="text"
+                placeholder="Search for anything..."
+                className="w-full pl-10 pr-4 py-2 border rounded-full text-gray-700 focus:outline-none focus:border-indigo-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
           {isSignedIn && (
             <Link
               to="/add-listing"
@@ -78,7 +102,7 @@ const Home = () => {
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {listings.slice(0, 6).map((card) => (
+          {filteredListings.map((card) => (
             <BarterCard key={card.id} {...card} />
           ))}
         </div>
