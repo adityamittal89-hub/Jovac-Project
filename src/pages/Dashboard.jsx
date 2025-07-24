@@ -26,7 +26,9 @@ const Dashboard = () => {
     },
   ];
 
-  const userListings = listings.filter((l) => l.owner === userName);
+  const userListings = listings.filter(
+    (l) => clerkUser && l.userId === clerkUser.id
+  );
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">

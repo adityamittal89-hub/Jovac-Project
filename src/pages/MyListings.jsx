@@ -9,9 +9,7 @@ const MyListings = () => {
   const { user } = useUser(); // Clerk user object
   const navigate = useNavigate();
 
-  const userName = user?.fullName || user?.emailAddress || "";
-
-  const myListings = listings.filter((l) => l.owner === userName);
+  const myListings = listings.filter((l) => user && l.userId === user.id);
 
   const handleEdit = (id) => {
     alert("Edit feature is not implemented (mock only).");
